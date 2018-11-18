@@ -51,9 +51,9 @@ Hence we have the following two xml files.
 ```
 
 
+3. `custom_packages.xml`:
 
-We also want to include our microg custom packages so, like before, create an XML (for
-example /home/user/manifests/custom_packages.xml) with this content:
+We also want to include our microg custom packages so, like before, create an XML with this content:
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -62,7 +62,23 @@ example /home/user/manifests/custom_packages.xml) with this content:
 </manifest>
 ```
 
-We move all 3 manifest files to `/home/$USER/lineageos/manifests`.
+4. `custom_repos.xml`:
+
+In order for our image to run properly we need to apply [this patch](https://review.lineageos.org/#/c/LineageOS/android_hardware_interfaces/+/206140/).
+Because this has not been merged upstream we create our own [fork](https://github.com/Iolaum/android_hardware_interfaces) of the repository and apply it
+on a [custom branch](https://github.com/Iolaum/android_hardware_interfaces/tree/lineage-15.1-s5neoltexx). Therefore we create the XML file needed to replace the
+upstream repository with our custom one:
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remove-project name="LineageOS/android_hardware_interfaces" />
+  <project name="Iolaum/android_hardware_interfaces" path="hardware/interfaces" remote="github" revision="lineage-15.1-s5neoltexx" />
+</manifest>
+```
+
+
+We move all 4 manifest files to `/home/$USER/lineageos/manifests`.
 
 We also set INCLUDE_PROPRIETARY=false, as the proprietary blobs are already
 provided by the vendor repositories (so we don't have to include the TheMuppets repo).
@@ -84,52 +100,13 @@ $ docker run \
     -v "/home/$USER/lineageos/cache:/srv/ccache" \
     -v "/home/$USER/lineageos/keys:/srv/keys" \
     -v "/home/$USER/lineageos/manifests:/srv/local_manifests" \
-    -e "RELEASE_TYPE=UNOFFICIAL-LINEAGE-MICROG" \
+    -e "RELEASE_TYPE=UNOFFICIAL_LINEAGE_MICROG" \
     -e "USER_NAME=SAMPLEUSER" \
     -e "USER_MAIL=SAMPLE@email.com" \
     -e "KEYS_SUBJECT=/C=UN/L=HQ/O=LineageOS/emailAddress=SAMPLE@email.com" \
     lineageos4microg/docker-lineage-cicd
-Unable to find image 'lineageos4microg/docker-lineage-cicd:latest' locally
-latest: Pulling from lineageos4microg/docker-lineage-cicd
-05d1a5232b46: Pull complete 
-121eda1015c1: Pull complete 
-2c1e53be5dc4: Pull complete 
-aa7885f50626: Pull complete 
-c2aad5ce7ba5: Pull complete 
-2fd8501f1bec: Pull complete 
-d835fee635b3: Pull complete 
-3b5a8a7bb36e: Pull complete 
-a64ae4750f88: Pull complete 
-9c56e74bab58: Pull complete 
-0b70ea949478: Pull complete 
-06ada5d0c2f8: Pull complete 
-cf24a32a6bcf: Pull complete 
-Digest: sha256:3180b45f3444d05c3e524042cffad01de02f6859126d908bbeed3d52afc09758
-Status: Downloaded newer image for lineageos4microg/docker-lineage-cicd:latest
-Set cache size limit to 50.0 GB
->> [Tue Nov 13 20:20:13 UTC 2018] SIGN_BUILDS = true but empty $KEYS_DIR, generating new keys
->> [Tue Nov 13 20:20:13 UTC 2018]  Generating releasekey...
->> [Tue Nov 13 20:20:13 UTC 2018]  Generating platform...
->> [Tue Nov 13 20:20:13 UTC 2018]  Generating shared...
->> [Tue Nov 13 20:20:13 UTC 2018]  Generating media...
->> [Tue Nov 13 20:20:13 UTC 2018] Branch:  lineage-15.1
->> [Tue Nov 13 20:20:13 UTC 2018] Devices: s5neoltexx,
->> [Tue Nov 13 20:20:13 UTC 2018] (Re)initializing branch repository
->> [Tue Nov 13 20:20:23 UTC 2018] Copying '/srv/local_manifests/*.xml' to '.repo/local_manifests/'
->> [Tue Nov 13 20:20:23 UTC 2018] Syncing branch repository
->> [Wed Nov 14 01:49:43 UTC 2018] Applying the restricted signature spoofing patch (based on android_frameworks_base-O.patch) to frameworks/base
->> [Wed Nov 14 01:49:43 UTC 2018] Setting "UNOFFICIAL-LINEAGE-MICROG" as release type
->> [Wed Nov 14 01:49:43 UTC 2018] Adding OTA URL overlay (for custom URL )
->> [Wed Nov 14 01:49:43 UTC 2018] Adding custom packages (GmsCore GsfProxy FakeStore MozillaNlpBackend NominatimNlpBackend com.google.android.maps.jar FDroid FDroidPrivilegedExtension )
->> [Wed Nov 14 01:49:43 UTC 2018] Adding keys path (/srv/keys)
->> [Wed Nov 14 01:49:43 UTC 2018] Using OpenJDK 8
->> [Wed Nov 14 01:49:43 UTC 2018] Preparing build environment
->> [Wed Nov 14 01:49:44 UTC 2018] Syncing branch repository
->> [Wed Nov 14 01:51:07 UTC 2018] Starting build for s5neoltexx, lineage-15.1 branch
->> [Wed Nov 14 04:01:21 UTC 2018] Moving build artifacts for s5neoltexx to '/srv/zips/s5neoltexx'
->> [Wed Nov 14 04:01:23 UTC 2018] Finishing build for s5neoltexx
->> [Wed Nov 14 04:01:23 UTC 2018] Cleaning source dir for device s5neoltexx
+# ...
 
 ```
 
-The [resulting image](https://www.androidfilehost.com/?fid=11410963190603846763) has been uploaded to androidfilehost.
+The [resulting image](https://www.androidfilehost.com/?fid=11410963190603853070) has been uploaded to androidfilehost.
