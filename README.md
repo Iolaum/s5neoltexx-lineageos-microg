@@ -10,7 +10,7 @@ As there is no official support for this device, we first have to include the so
 
     Device tree: https://github.com/Exynos7580/android_device_samsung_s5neoltexx
     Common Tree: https://github.com/Exynos7580/android_device_samsung_exynos7580-common
-    Kernel: https://github.com/Exynos7580/android_device_samsung_exynos7580-common
+    Kernel: https://github.com/Exynos7580/android_kernel_samsung_exynos7580-common
     Vendor blobs: https://github.com/Exynos7580/android_vendor_samsung_exynos7580-common
 
 Then, with the help of lineage.dependencies from the 
@@ -53,12 +53,19 @@ Hence we have the following two xml files.
 
 3. `custom_packages.xml`:
 
-We also want to include our microg custom packages so, like before, create an XML with this content:
+We also want to include our microg custom packages so. Because we want to modify the available packages we fork the [upstream repository](https://github.com/lineageos4microg/android_prebuilts_prebuiltapks) and modify it to include the following modifications:
+
+- Changed default GmsCore build to the one [provided by Nanolx through his repository](https://nanolx.org/fdroid/). (I used fdroid from another device to download it and copied it through adb).
+- Added RemoteDroidGuard apk as a prebuilt priviliged app. Apk sourced from [flawedworld's PR](https://github.com/lineageos4microg/android_prebuilts_prebuiltapks/pull/9) that's taken from Nanodroid flashable zip.
+- Added Gsam Battery app from playstore - through apkmirror download. I did this so that the app has the needed permissions to capture battery usage instead of having to give them afterwards through adb or root.
+- Added MatLog Libre app to help with capturing logs. In this case as well the app needs an extra permission through adb, it's easier to include it in the build. Downloaded the app from fdroid's website.
+
+To use those modification we create an XML with this content:
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
-  <project name="lineageos4microg/android_prebuilts_prebuiltapks" path="prebuilts/prebuiltapks" remote="github" revision="master" />
+  <project name="Iolaum/android_prebuilts_prebuiltapks" path="prebuilts/prebuiltapks" remote="github" revision="iolaum" />
 </manifest>
 ```
 
@@ -88,25 +95,40 @@ Now we can just run the build like it was officially supported:
 
 ```
 $ docker run \
-    -e "BRANCH_NAME=lineage-15.1" \
-    -e "DEVICE_LIST=s5neoltexx" \
-    -e "SIGN_BUILDS=true" \
-    -e "SIGNATURE_SPOOFING=restricted" \
-    -e "CUSTOM_PACKAGES=GmsCore GsfProxy FakeStore MozillaNlpBackend NominatimNlpBackend com.google.android.maps.jar FDroid FDroidPrivilegedExtension " \
-    -e "INCLUDE_PROPRIETARY=false" \
-    -v "/home/$USER/lineageos/src:/srv/src" \
-    -v "/home/$USER/lineageos/zips:/srv/zips" \
-    -v "/home/$USER/lineageos/logs:/srv/logs" \
-    -v "/home/$USER/lineageos/cache:/srv/ccache" \
-    -v "/home/$USER/lineageos/keys:/srv/keys" \
-    -v "/home/$USER/lineageos/manifests:/srv/local_manifests" \
-    -e "RELEASE_TYPE=UNOFFICIAL_LINEAGE_MICROG" \
-    -e "USER_NAME=SAMPLEUSER" \
-    -e "USER_MAIL=SAMPLE@email.com" \
-    -e "KEYS_SUBJECT=/C=UN/L=HQ/O=LineageOS/emailAddress=SAMPLE@email.com" \
-    lineageos4microg/docker-lineage-cicd
-# ...
-
+>      -e "BRANCH_NAME=lineage-15.1" \
+>      -e "DEVICE_LIST=s5neoltexx" \
+>      -e "SIGN_BUILDS=true" \
+>      -e "SIGNATURE_SPOOFING=restricted" \
+>      -e "CUSTOM_PACKAGES=GmsCore GsfProxy FakeStore MozillaNlpBackend NominatimNlpBackend com.google.android.maps.jar FDroid FDroidPrivilegedExtension OpenWeatherMapWeatherProvider RemoteDroidGuard GsamBattery MatLog" \
+>      -e "INCLUDE_PROPRIETARY=false" \
+>      -v "/home/$USER/lineageos/src:/srv/src" \
+>      -v "/home/$USER/lineageos/zips:/srv/zips" \
+>      -v "/home/$USER/lineageos/logs:/srv/logs" \
+>      -v "/home/$USER/lineageos/cache:/srv/ccache" \
+>      -v "/home/$USER/lineageos/keys:/srv/keys" \
+>      -v "/home/$USER/lineageos/manifests:/srv/local_manifests" \
+>      -e "RELEASE_TYPE=CUSTOM_LINEAGE_MICROG" \
+>      -e "USER_NAME=Nikolaos Perrakis" \
+>      -e "USER_MAIL=nikperrakis@gmail.com" \
+>      -e "KEYS_SUBJECT=/C=UK/L=Nottingham/O=LineageOS/emailAddress=nikperrakis@gmail.com" \
+>      lineageos4microg/docker-lineage-cicd
+Set cache size limit to 50.0 GB
+>> [Mon Feb  4 00:10:05 UTC 2019] Branch:  lineage-15.1
+>> [Mon Feb  4 00:10:05 UTC 2019] Devices: s5neoltexx,
+>> [Mon Feb  4 00:10:06 UTC 2019] (Re)initializing branch repository
+>> [Mon Feb  4 00:10:08 UTC 2019] Copying '/srv/local_manifests/*.xml' to '.repo/local_manifests/'
+>> [Mon Feb  4 00:10:08 UTC 2019] Syncing branch repository
+>> [Mon Feb  4 00:11:14 UTC 2019] Applying the restricted signature spoofing patch (based on android_frameworks_base-O.patch) to frameworks/base
+>> [Mon Feb  4 00:11:14 UTC 2019] Setting "CUSTOM_LINEAGE_MICROG" as release type
+>> [Mon Feb  4 00:11:14 UTC 2019] Adding OTA URL overlay (for custom URL )
+>> [Mon Feb  4 00:11:14 UTC 2019] Adding custom packages (GmsCore GsfProxy FakeStore MozillaNlpBackend NominatimNlpBackend com.google.android.maps.jar FDroid FDroidPrivilegedExtension OpenWeatherMapWeatherProvider RemoteDroidGuard GsamBattery MatLog)
+>> [Mon Feb  4 00:11:14 UTC 2019] Adding keys path (/srv/keys)
+>> [Mon Feb  4 00:11:14 UTC 2019] Using OpenJDK 8
+>> [Mon Feb  4 00:11:15 UTC 2019] Preparing build environment
+>> [Mon Feb  4 00:11:15 UTC 2019] Starting build for s5neoltexx, lineage-15.1 branch
+>> [Mon Feb  4 00:59:53 UTC 2019] Moving build artifacts for s5neoltexx to '/srv/zips/s5neoltexx'
+>> [Mon Feb  4 00:59:55 UTC 2019] Finishing build for s5neoltexx
+>> [Mon Feb  4 00:59:55 UTC 2019] Cleaning source dir for device s5neoltexx
 ```
 
-The [resulting image](https://www.androidfilehost.com/?fid=11410963190603853070) has been uploaded to androidfilehost.
+The [resulting image](https://www.androidfilehost.com/?fid=11410963190603915175) has been uploaded to androidfilehost.
