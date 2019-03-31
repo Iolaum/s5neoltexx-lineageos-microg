@@ -55,7 +55,8 @@ Hence we have the following two xml files.
 
 We also want to include our microg custom packages so. Because we want to modify the available packages we fork the [upstream repository](https://github.com/lineageos4microg/android_prebuilts_prebuiltapks) and modify it to include the following modifications:
 
-- Changed default GmsCore build to the one [provided by Nanolx through his repository](https://nanolx.org/fdroid/). (I used fdroid from another device to download it and copied it through adb).
+- Changed default GmsCore build to the one [provided by Nanolx through his repository](https://nanolx.org/fdroid/repo). Source code is available at [GitHub](https://github.com/Nanolx/android_packages_apps_GmsCore).
+You can get a newer version by running `wget https://nanolx.org/fdroid/repo/GmsCore_xx.apk`.
 - Added RemoteDroidGuard apk as a prebuilt priviliged app. Apk sourced from [flawedworld's PR](https://github.com/lineageos4microg/android_prebuilts_prebuiltapks/pull/9) that's taken from Nanodroid flashable zip.
 - Added Gsam Battery app from playstore - through apkmirror download. I did this so that the app has the needed permissions to capture battery usage instead of having to give them afterwards through adb or root.
 - Added MatLog Libre app to help with capturing logs. In this case as well the app needs an extra permission through adb, it's easier to include it in the build. Downloaded the app from fdroid's website.
