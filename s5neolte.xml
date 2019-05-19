@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote  name="gitlab"
+           fetch="https://gitlab.com" />
+  <project name="Exynos7580/android_device_samsung_universal7580-common" path="device/samsung/universal7580-common" remote="gitlab" revision="lineage-15.1" />
+  <project name="Exynos7580/android_kernel_samsung_universal7580" path="kernel/samsung/universal7580" remote="gitlab" revision="lineage-15.1" />
+  <project name="Exynos7580/android_vendor_samsung_universal7580-common" path="vendor/samsung/universal7580-common" remote="gitlab" revision="lineage-15.1" />
+  <project name="LineageOS/android_hardware_samsung" path="hardware/samsung" remote="github" revision="lineage-15.1" />
+  <project name="LineageOS/android_packages_resources_devicesettings" path="packages/resources/devicesettings" remote="github" revision="lineage-15.1" />
+  <project name="LineageOS/android_packages_apps_FlipFlap" path="packages/apps/FlipFlap" remote="github" revision="lineage-15.1" />
+
+  <project name="Exynos7580/android_device_samsung_s5neolte" path="device/samsung/s5neolte" remote="gitlab" revision="lineage-15.1" />
+  <project name="Exynos7580/android_vendor_samsung_s5neolte" path="vendor/samsung/s5neolte" remote="gitlab" revision="lineage-15.1" />
+
+  <!-- Add repository that contains pre-built apks -->
+  <project name="Iolaum/android_prebuilts_prebuiltapks" path="prebuilts/prebuiltapks" remote="github" revision="iolaum" />
+
+  <!-- Remove aosp webview to replace with bromite webview - WIP -->
+  <remove-project name="LineageOS/android_external_chromium-webview" />
+  <project name="nikperrakis/bromite_external_chromium-webview" path="external/chromium-webview" remote="gitlab" revision="lineage-16.0" />
+</manifest>
